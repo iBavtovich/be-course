@@ -4,15 +4,16 @@ import org.model.Dog;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import javax.validation.Valid;
+import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 @RestController
 @RequestMapping(value = "/api/dogs")
 public class DogController {
 
-    private static List<Dog> dogs = new ArrayList<Dog>() {{
+    private static volatile BlockingQueue<Dog> dogs = new LinkedBlockingQueue<Dog>() {{
         this.add(new Dog().setId(0L).setName("ABBA").setDateOfBirth(new Date()).setHeight(1).setWeight(1));
     }};
     private static Long index = 1L;
@@ -27,7 +28,7 @@ public class DogController {
     }
 
     @PutMapping("/{id}")
-    public Dog updateDog(@RequestBody Dog dog, @PathVariable Long id) {
+    public Dog updateDog(@Valid @RequestBody Dog dog, @PathVariable Long id) {
         Dog dogById = findDogById(id);
         if (dogById != null) {
             dogs.remove(dogById);
@@ -37,7 +38,7 @@ public class DogController {
     }
 
     @PostMapping()
-    public Dog addDog(@RequestBody Dog dog) {
+    public Dog addDog(@Valid @RequestBody Dog dog) {
         if (dog.getId() != null) {
             throw new IllegalArgumentException();
         }
@@ -53,6 +54,10 @@ public class DogController {
         }
         dogs.remove(dogById);
         return ResponseEntity.noContent().build();
+    }
+
+    public List<Dog> getAllDogs() {
+        return new ArrayList<>(dogs);
     }
 
     private Dog findDogById(@PathVariable Long id) {
