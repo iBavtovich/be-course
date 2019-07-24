@@ -30,10 +30,31 @@ public class DogValidationTest {
     }
 
     @Test
+    public void whenNameIsTooShort_validationFailed() {
+        Dog dog = new Dog().setDateOfBirth(new Date(0)).setHeight(1).setWeight(1).setName("");
+        Set violations = validator.validate(dog);
+        assertFalse(violations.isEmpty());
+    }
+
+    @Test
+    public void whenNameIsMinimal_validationPassed() {
+        Dog dog = new Dog().setDateOfBirth(new Date(0)).setHeight(1).setWeight(1).setName(english(1));
+        Set violations = validator.validate(dog);
+        assertTrue(violations.isEmpty());
+    }
+
+    @Test
     public void whenNameIsTooLong_validationFailed() {
         Dog dog = new Dog().setDateOfBirth(new Date(0)).setHeight(1).setWeight(1).setName(english(101));
         Set violations = validator.validate(dog);
         assertFalse(violations.isEmpty());
+    }
+
+    @Test
+    public void whenNameIs100Symbols_validationPassed() {
+        Dog dog = new Dog().setDateOfBirth(new Date(0)).setHeight(1).setWeight(1).setName(english(100));
+        Set violations = validator.validate(dog);
+        assertTrue(violations.isEmpty());
     }
 
     @Test

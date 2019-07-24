@@ -6,17 +6,19 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
-@RequestMapping(value = "/api/dogs")
+@RequestMapping(value = DogController.API_PATH)
 public class DogController {
 
-    private static volatile BlockingQueue<Dog> dogs = new LinkedBlockingQueue<Dog>() {{
+    public static final String API_PATH = "/api/dogs";
+
+    private static List<Dog> dogs = new CopyOnWriteArrayList<Dog>() {{
         this.add(new Dog().setId(0L).setName("ABBA").setDateOfBirth(new Date()).setHeight(1).setWeight(1));
     }};
-    private static Long index = 1L;
+    private static AtomicLong index = new AtomicLong(1);
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getDogById(@PathVariable Long id) {
@@ -42,7 +44,7 @@ public class DogController {
         if (dog.getId() != null) {
             throw new IllegalArgumentException();
         }
-        dogs.add(dog.setId(index++));
+        dogs.add(dog.setId(index.incrementAndGet()));
         return dog;
     }
 
