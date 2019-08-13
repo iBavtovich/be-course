@@ -1,0 +1,1 @@
+INSERT INTO DOG('NAME', 'BIRTH_DATE', 'HEIGHT', 'WEIGHT') values ('ABBA', NOW(), 1, 1);

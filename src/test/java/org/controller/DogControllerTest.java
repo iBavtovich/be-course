@@ -1,20 +1,22 @@
 package org.controller;
 
+import org.dao.H2DogDao;
 import org.model.Dog;
 import org.testng.annotations.Test;
 
 import java.util.Date;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.*;
 
 public class DogControllerTest {
 
-    private DogController dogController = new DogController();
+    private DogController dogController = new DogController(new H2DogDao());
 
     @Test
     public void whenAddDog_itIsSaved() {
-        Dog dog = new Dog();
+        Dog dog = Dog.random();
         int beforeSave = dogController.getAllDogs().size();
         Dog returned = dogController.addDog(dog);
 
@@ -26,21 +28,21 @@ public class DogControllerTest {
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void exceptionIsThrown_whenTryToAddDofWithId() {
-        dogController.addDog(new Dog().setId(1L));
+        dogController.addDog(Dog.random().setId(1L));
     }
 
     @Test
     public void getDog_returnedDogFromDb() {
-        Dog dog = new Dog();
+        Dog dog = Dog.random();
         Dog returned = dogController.addDog(dog);
 
         Dog fromDb = (Dog) dogController.getDogById(returned.getId()).getBody();
-        assertEquals(fromDb, returned);
+        assertThat(fromDb).isEqualToComparingFieldByField(returned);
     }
 
     @Test
     public void wheDogUpdated_returnUpdatedAndSaveInDb() {
-        Dog dog = new Dog();
+        Dog dog = Dog.random();
         Dog returned = dogController.addDog(dog);
         returned.setWeight(10).setHeight(20).setName("Luck").setDateOfBirth(new Date(0));
 
@@ -51,12 +53,12 @@ public class DogControllerTest {
         assertEquals(updated.getDateOfBirth(), new Date(0));
 
         Dog fromDb = (Dog) dogController.getDogById(returned.getId()).getBody();
-        assertEquals(fromDb, updated);
+        assertThat(fromDb).isEqualToComparingFieldByField(updated);
     }
 
     @Test
     public void whenRemove_itIsRemoved() {
-        Dog dog = new Dog();
+        Dog dog = Dog.random();
         Dog returned = dogController.addDog(dog);
 
         dogController.deleteDog(returned.getId());

@@ -9,7 +9,12 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
+
+import static io.qala.datagen.RandomShortApi.english;
+import static io.qala.datagen.RandomShortApi.integer;
 
 @Getter
 @Setter
@@ -31,4 +36,19 @@ public class Dog {
 
     @Min(1)
     private int weight;
+
+    public static Dog fromResultSet(ResultSet resultSet) throws SQLException {
+        Date birthDate = resultSet.getTimestamp("BIRTH_DATE") != null
+                ? new Date(resultSet.getTimestamp("BIRTH_DATE").getTime())
+                : null;
+        return new Dog().setName(resultSet.getString("NAME"))
+                        .setDateOfBirth(birthDate)
+                        .setId(resultSet.getLong("ID"))
+                        .setHeight(resultSet.getInt("HEIGHT"))
+                        .setWeight(resultSet.getInt("WEIGHT"));
+    }
+
+    public static Dog random() {
+        return new Dog().setWeight(integer(1, 100)).setWeight(integer(1, 100)).setName(english(1, 100));
+    }
 }
