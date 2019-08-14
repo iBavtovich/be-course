@@ -1,6 +1,5 @@
 package org.dao;
 
-import org.h2.jdbcx.JdbcDataSource;
 import org.model.Dog;
 
 import javax.sql.DataSource;
