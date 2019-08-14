@@ -55,7 +55,7 @@ public class DogControllerITest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void getByIdReturnsCorrectDog() {
-        long existingId = 0L;
+        long existingId = 1L;
         Dog fromDb = getDogById(existingId).as(Dog.class);
         assertEquals(fromDb.getId().longValue(), existingId);
         assertEquals(fromDb.getName(), "ABBA");

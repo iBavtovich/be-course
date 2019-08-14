@@ -4,9 +4,16 @@
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-<!--    <bean id="dogDao" class="org.dao.InMemoryDogDao"/>-->
-    <bean id="dogDao" class="org.dao.H2DogDao"/>
-<!--    <bean id="dataSource" class="org.h2.jdbcx.JdbcDataSource"/>-->
+    <bean name="dataSource" class="org.h2.jdbcx.JdbcDataSource">
+        <property name="url" value="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1" />
+        <property name="user" value="sa" />
+        <property name="password" value="" />
+    </bean>
+    <!--<bean id="dogDao" class="org.dao.InMemoryDogDao"/>-->
+
+    <bean id="dogDao" class="org.dao.H2DogDao">
+        <constructor-arg name="dataSource" ref="dataSource"/>
+    </bean>
 
     <bean id="dogController" class="org.controller.DogController" autowire="byType"/>
     <bean name="jacksonObjectMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean"/>
