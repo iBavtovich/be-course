@@ -7,6 +7,7 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
 import static io.qala.datagen.RandomShortApi.english;
+import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
 
 @ContextConfiguration(value = {"classpath:spring-dispatcher-servlet.xml"})
@@ -19,6 +20,7 @@ public class H2DogDaoTest extends AbstractTestNGSpringContextTests {
     public void testSqlInjection() {
         Dog dog = dogDao.saveDog(Dog.random().setName("\"' blah"));
         assertNotNull(dog.getId());
+        assertEquals(dog.getName(), "\"' blah");
     }
 
     @Test
