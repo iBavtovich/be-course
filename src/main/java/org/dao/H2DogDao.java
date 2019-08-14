@@ -1,5 +1,6 @@
 package org.dao;
 
+import lombok.RequiredArgsConstructor;
 import org.model.Dog;
 
 import javax.sql.DataSource;
@@ -8,26 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@RequiredArgsConstructor
 public class H2DogDao implements DogDao {
 
     private final DataSource dataSource;
-
-    public H2DogDao(DataSource dataSource) {
-        this.dataSource = dataSource;
-        try (Connection connection = dataSource.getConnection();
-             Statement statement = connection.createStatement()) {
-            statement.execute("CREATE TABLE DOG (\n" +
-                    "    ID number(22) auto_increment primary key,\n" +
-                    "    NAME varchar(100) not null,\n" +
-                    "    BIRTH_DATE timestamp,\n" +
-                    "    HEIGHT number(3),\n" +
-                    "    WEIGHT number(3)\n" +
-                    ")");
-            statement.execute("INSERT INTO DOG(NAME, BIRTH_DATE, HEIGHT, WEIGHT) values ('ABBA', NOW(), 1, 1)");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public Dog findDogById(long id) {
