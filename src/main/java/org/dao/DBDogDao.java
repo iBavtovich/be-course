@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
-public class H2DogDao implements DogDao {
+public class DBDogDao implements DogDao {
 
     private final DataSource dataSource;
 

@@ -10,8 +10,8 @@ import static io.qala.datagen.RandomShortApi.english;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
 
-@ContextConfiguration(value = {"classpath:spring-dispatcher-servlet.xml"})
-public class H2DogDaoTest extends AbstractTestNGSpringContextTests {
+@ContextConfiguration(value = {"classpath:spring-test-config.xml"})
+public class DBDogDaoTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private DogDao dogDao;

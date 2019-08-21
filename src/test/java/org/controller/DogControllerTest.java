@@ -1,7 +1,5 @@
 package org.controller;
 
-import org.dao.H2DogDao;
-import org.dao.InMemoryDogDao;
 import org.model.Dog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -14,7 +12,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.*;
 
-@ContextConfiguration(value = {"classpath:spring-dispatcher-servlet.xml"})
+@ContextConfiguration(value = {"classpath:spring-test-config.xml"})
 public class DogControllerTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
