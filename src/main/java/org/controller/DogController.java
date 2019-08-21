@@ -37,8 +37,7 @@ public class DogController {
         if (dog.getId() != null) {
             throw new IllegalArgumentException();
         }
-        dogDao.saveDog(dog);
-        return dog;
+        return dogDao.saveDog(dog);
     }
 
     @DeleteMapping("/{id}")

@@ -17,7 +17,7 @@ public class DBDogDao implements DogDao {
     @Override
     public Dog findDogById(long id) {
         try (Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM DOG WHERE ID = ?")) {
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM DOG WHERE ID = ?")) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
@@ -31,20 +31,33 @@ public class DBDogDao implements DogDao {
 
     @Override
     public void removeDog(Dog toRemove) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement("DELETE FROM DOG WHERE ID = ?")) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+
+            statement = connection.prepareStatement("DELETE FROM DOG WHERE ID = ?");
             statement.setLong(1, toRemove.getId());
             statement.execute();
-        } catch (SQLException e) {
+            connection.commit();
+        } catch (Exception e) {
             e.printStackTrace();
+            rollbackTransactions(connection);
+        } finally {
+            handleException(connection, statement);
         }
     }
 
     @Override
     public Dog saveDog(Dog toSave) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement("INSERT INTO DOG(NAME, BIRTH_DATE, HEIGHT, WEIGHT) values (?,?,?,?)"
-                     , Statement.RETURN_GENERATED_KEYS)) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+
+            statement = connection.prepareStatement("INSERT INTO DOG(NAME, BIRTH_DATE, HEIGHT, WEIGHT) values (?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, toSave.getName());
             statement.setTimestamp(2, toSave.getDateOfBirth() != null ? new Timestamp(toSave.getDateOfBirth().getTime()) : null);
             statement.setInt(3, toSave.getHeight());
@@ -52,8 +65,11 @@ public class DBDogDao implements DogDao {
             statement.execute();
             statement.getGeneratedKeys().next();
             return toSave.setId(statement.getGeneratedKeys().getLong(1));
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            rollbackTransactions(connection);
+        } finally {
+            handleException(connection, statement);
         }
         return null;
     }
@@ -76,9 +92,13 @@ public class DBDogDao implements DogDao {
 
     @Override
     public Dog updateDog(Long id, Dog forUpdate) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement("UPDATE DOG SET NAME = ?, BIRTH_DATE = ?" +
-                     ", HEIGHT = ?, WEIGHT = ? WHERE ID = ?")) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+            statement = connection.prepareStatement("UPDATE DOG SET NAME = ?, BIRTH_DATE = ?, HEIGHT = ?, WEIGHT = ? WHERE ID = ?");
+
             statement.setString(1, forUpdate.getName());
             statement.setTimestamp(2, forUpdate.getDateOfBirth() != null ? new Timestamp(forUpdate.getDateOfBirth().getTime()) : null);
             statement.setInt(3, forUpdate.getHeight());
@@ -89,9 +109,35 @@ public class DBDogDao implements DogDao {
                 throw new NoSuchElementException();
             }
             return forUpdate.setId(id);
+        }catch (Exception e) {
+            e.printStackTrace();
+            rollbackTransactions(connection);
+        } finally {
+            handleException(connection, statement);
+        }
+        return null;
+    }
+
+    private void rollbackTransactions(Connection connection) {
+        if (connection != null) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private void handleException(Connection connection, PreparedStatement statement) {
+        try {
+            if (connection != null) {
+                connection.close();
+            }
+            if (statement != null) {
+                statement.close();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
     }
 }
