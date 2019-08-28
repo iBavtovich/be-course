@@ -1,8 +1,8 @@
 package org.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.dao.DogDao;
 import org.model.Dog;
+import org.service.DogService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,11 +16,11 @@ public class DogController {
 
     public static final String API_PATH = "/api/dogs";
 
-    private final DogDao dogDao;
+    private final DogService dogService;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getDogById(@PathVariable Long id) {
-        Dog dog = dogDao.findDogById(id);
+        Dog dog = dogService.findDogById(id);
         if (dog == null) {
             return ResponseEntity.notFound().build();
         }
@@ -29,7 +29,7 @@ public class DogController {
 
     @PutMapping("/{id}")
     public Dog updateDog(@Valid @RequestBody Dog dog, @PathVariable Long id) {
-        return dogDao.updateDog(id, dog);
+        return dogService.updateDog(id, dog);
     }
 
     @PostMapping()
@@ -37,21 +37,21 @@ public class DogController {
         if (dog.getId() != null) {
             throw new IllegalArgumentException();
         }
-        return dogDao.saveDog(dog);
+        return dogService.saveDog(dog);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteDog(@PathVariable Long id) {
-        Dog dogById = dogDao.findDogById(id);
+        Dog dogById = dogService.findDogById(id);
         if (dogById == null) {
             return ResponseEntity.notFound().build();
         }
-        dogDao.removeDog(dogById);
+        dogService.removeDog(dogById);
         return ResponseEntity.noContent().build();
     }
 
     public List<Dog> getAllDogs() {
-        return dogDao.findAllDogs();
+        return dogService.findAllDogs();
     }
 
 }

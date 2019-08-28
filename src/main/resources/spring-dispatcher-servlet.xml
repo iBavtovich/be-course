@@ -36,8 +36,12 @@
             <constructor-arg name="dataSource" ref="dataSource"/>
         </bean>
 
-        <bean id="dogController" class="org.controller.DogController" autowire="byType">
+        <bean id="dogService" class="org.service.SimpleDogService">
             <constructor-arg name="dogDao" ref="dogDao"/>
+        </bean>
+
+        <bean id="dogController" class="org.controller.DogController" autowire="byType">
+            <constructor-arg name="dogService" ref="dogService"/>
         </bean>
         <bean name="jacksonObjectMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean"/>
 

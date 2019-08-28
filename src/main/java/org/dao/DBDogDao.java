@@ -64,6 +64,7 @@ public class DBDogDao implements DogDao {
             statement.setInt(4, toSave.getWeight());
             statement.execute();
             statement.getGeneratedKeys().next();
+            connection.commit();
             return toSave.setId(statement.getGeneratedKeys().getLong(1));
         } catch (Exception e) {
             e.printStackTrace();
@@ -108,6 +109,7 @@ public class DBDogDao implements DogDao {
             if (updatedRows != 1) {
                 throw new NoSuchElementException();
             }
+            connection.commit();
             return forUpdate.setId(id);
         }catch (Exception e) {
             e.printStackTrace();

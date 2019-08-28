@@ -25,7 +25,7 @@ import java.lang.Long;
 
 
 @Test
-@ContextConfiguration(value = {"classpath:spring-test-config.xml"})
+@ContextConfiguration(value = {"classpath:spring-dispatcher-servlet.xml", "classpath:spring-test-config.xml"})
 @WebAppConfiguration
 public class DogControllerITest extends AbstractTestNGSpringContextTests {
 
