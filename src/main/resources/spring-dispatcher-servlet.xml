@@ -23,6 +23,7 @@
             <property name="user" value="postgres" />
             <property name="password" value="password" />
             <property name="prepareThreshold" value="1"/>
+            <property name="preparedStatementCacheQueries" value="1"/>
         </bean>
         <bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
             <property name="baselineOnMigrate" value="true" />
@@ -32,11 +33,16 @@
     </beans>
 
     <beans>
-        <bean id="dogDao" class="org.dao.DBDogDao">
+        <bean id="jdbcConnectionHolder" class="org.JdbcConnectionHolder">
             <constructor-arg name="dataSource" ref="dataSource"/>
         </bean>
 
+        <bean id="dogDao" class="org.dao.DBDogDao">
+            <constructor-arg name="connectionHolder" ref="jdbcConnectionHolder"/>
+        </bean>
+
         <bean id="dogService" class="org.service.SimpleDogService">
+            <constructor-arg name="connectionHolder" ref="jdbcConnectionHolder"/>
             <constructor-arg name="dogDao" ref="dogDao"/>
         </bean>
 
