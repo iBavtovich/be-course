@@ -41,13 +41,17 @@
             <constructor-arg name="connectionHolder" ref="jdbcConnectionHolder"/>
         </bean>
 
-        <bean id="dogService" class="org.service.SimpleDogService">
-            <constructor-arg name="connectionHolder" ref="jdbcConnectionHolder"/>
+        <bean id="simpleDogService" class="org.service.SimpleDogService">
             <constructor-arg name="dogDao" ref="dogDao"/>
         </bean>
 
-        <bean id="dogController" class="org.controller.DogController" autowire="byType">
-            <constructor-arg name="dogService" ref="dogService"/>
+        <bean id="transactionDogService" class="org.service.TransactionalDogService">
+            <constructor-arg name="dogService" ref="simpleDogService"/>
+            <constructor-arg name="connectionHolder" ref="jdbcConnectionHolder"/>
+        </bean>
+
+        <bean id="dogController" class="org.controller.DogController">
+            <constructor-arg name="dogService" ref="transactionDogService"/>
         </bean>
         <bean name="jacksonObjectMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean"/>
 

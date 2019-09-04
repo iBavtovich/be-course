@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
 @RequiredArgsConstructor
 public class JdbcConnectionHolder {
@@ -19,8 +18,46 @@ public class JdbcConnectionHolder {
                 connectionThreadLocal.set(dataSource.getConnection());
             }
         } catch(SQLException e){
-                throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
         return connectionThreadLocal.get();
+    }
+
+    public void startTransaction() {
+        Connection connection;
+        try {
+            connection = acquireConnection();
+            connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void commitTransaction() {
+        Connection connection;
+        try {
+            connection = acquireConnection();
+            connection.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void rollbackTransaction() {
+        Connection connection;
+        try {
+            connection = acquireConnection();
+            connection.rollback();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void closeConnection() {
+        try {
+            acquireConnection().close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
