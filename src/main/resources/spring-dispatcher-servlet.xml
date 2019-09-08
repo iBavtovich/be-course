@@ -45,13 +45,25 @@
             <constructor-arg name="dogDao" ref="dogDao"/>
         </bean>
 
-        <bean id="transactionDogService" class="org.service.TransactionalDogService">
-            <constructor-arg name="dogService" ref="simpleDogService"/>
-            <constructor-arg name="connectionHolder" ref="jdbcConnectionHolder"/>
+        <bean name="dogServiceClass" factory-bean="simpleDogService" factory-method="getClass"/>
+        <bean id="proxyFactory" class="java.lang.reflect.Proxy"/>
+        <bean id="transactionalProxyService" class="java.lang.reflect.Proxy" factory-method="newProxyInstance">
+            <constructor-arg name="loader">
+                <bean factory-bean="dogServiceClass" factory-method="getClassLoader"/>
+            </constructor-arg>
+            <constructor-arg name="interfaces">
+                <bean factory-bean="dogServiceClass" factory-method="getInterfaces"/>
+            </constructor-arg>
+            <constructor-arg name="h">
+                <bean class="org.TransactionalProxy">
+                    <constructor-arg name="connectionHolder" ref="jdbcConnectionHolder"/>
+                    <constructor-arg name="targetObject" ref="simpleDogService"/>
+                </bean>
+            </constructor-arg>
         </bean>
 
         <bean id="dogController" class="org.controller.DogController">
-            <constructor-arg name="dogService" ref="transactionDogService"/>
+            <constructor-arg name="dogService" ref="transactionalProxyService"/>
         </bean>
         <bean name="jacksonObjectMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean"/>
 
