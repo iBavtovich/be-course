@@ -33,7 +33,7 @@
     </beans>
 
     <beans>
-        <bean id="jdbcConnectionHolder" class="org.JdbcConnectionHolder">
+        <bean id="jdbcConnectionHolder" class="org.transactional.JdbcConnectionHolder">
             <constructor-arg name="dataSource" ref="dataSource"/>
         </bean>
 
@@ -42,24 +42,19 @@
         </bean>
 
         <bean id="simpleDogService" class="org.service.SimpleDogService">
-            <constructor-arg name="dogDao" ref="dogDao"/>
+            <property name="dogDao" ref="dogDao"/>
         </bean>
 
         <bean name="dogServiceClass" factory-bean="simpleDogService" factory-method="getClass"/>
-        <bean id="proxyFactory" class="java.lang.reflect.Proxy"/>
-        <bean id="transactionalProxyService" class="java.lang.reflect.Proxy" factory-method="newProxyInstance">
-            <constructor-arg name="loader">
-                <bean factory-bean="dogServiceClass" factory-method="getClassLoader"/>
-            </constructor-arg>
-            <constructor-arg name="interfaces">
-                <bean factory-bean="dogServiceClass" factory-method="getInterfaces"/>
-            </constructor-arg>
-            <constructor-arg name="h">
-                <bean class="org.TransactionalProxy">
-                    <constructor-arg name="connectionHolder" ref="jdbcConnectionHolder"/>
-                    <constructor-arg name="targetObject" ref="simpleDogService"/>
-                </bean>
-            </constructor-arg>
+        <bean name="transactionalInterceptor" class="org.transactional.TransactionalInterceptor">
+            <constructor-arg name="connectionHolder" ref="jdbcConnectionHolder"/>
+        </bean>
+        <bean name="cGLibEnhancer" class="net.sf.cglib.proxy.Enhancer">
+            <property name="superclass" ref="dogServiceClass"/>
+            <property name="callback" ref="transactionalInterceptor"/>
+         </bean>
+        <bean name="transactionalProxyService" factory-bean="cGLibEnhancer" factory-method="create">
+            <property name="dogDao" ref="dogDao"/>
         </bean>
 
         <bean id="dogController" class="org.controller.DogController">

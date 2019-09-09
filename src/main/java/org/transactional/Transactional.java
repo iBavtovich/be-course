@@ -1,4 +1,4 @@
-package org;
+package org.transactional;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

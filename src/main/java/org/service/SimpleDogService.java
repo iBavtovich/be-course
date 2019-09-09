@@ -1,38 +1,38 @@
 package org.service;
 
-import lombok.RequiredArgsConstructor;
-import org.Transactional;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.dao.DogDao;
 import org.model.Dog;
+import org.transactional.Transactional;
 
 import java.util.List;
 
-@RequiredArgsConstructor
-public class SimpleDogService implements DogService {
+@Setter
+@NoArgsConstructor
+public class SimpleDogService {
 
-    private final DogDao dogDao;
+    private DogDao dogDao;
 
-    @Override
     public Dog findDogById(long id) {
         return dogDao.findDogById(id);
     }
 
-    @Override @Transactional
+    @Transactional
     public void removeDog(Dog toRemove) {
         dogDao.removeDog(toRemove);
     }
 
-    @Override @Transactional
+    @Transactional
     public Dog saveDog(Dog toSave) {
         return dogDao.saveDog(toSave);
     }
 
-    @Override
     public List<Dog> findAllDogs() {
         return dogDao.findAllDogs();
     }
 
-    @Override @Transactional
+    @Transactional
     public Dog updateDog(Long id, Dog dog) {
         return dogDao.updateDog(id, dog);
     }

@@ -2,7 +2,7 @@ package org.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.model.Dog;
-import org.service.DogService;
+import org.service.SimpleDogService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +16,7 @@ public class DogController {
 
     public static final String API_PATH = "/api/dogs";
 
-    private final DogService dogService;
+    private final SimpleDogService dogService;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getDogById(@PathVariable Long id) {

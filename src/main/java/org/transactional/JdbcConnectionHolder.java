@@ -1,4 +1,4 @@
-package org;
+package org.transactional;
 
 import lombok.RequiredArgsConstructor;
 

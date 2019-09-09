@@ -1,7 +1,7 @@
 package org.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.JdbcConnectionHolder;
+import org.transactional.JdbcConnectionHolder;
 import org.model.Dog;
 
 import java.sql.*;
