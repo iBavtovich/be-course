@@ -9,17 +9,18 @@ import java.lang.reflect.Method;
 @RequiredArgsConstructor
 public class TransactionalInterceptor implements MethodInterceptor {
 
+    private final Object proxiedObject;
     private final JdbcConnectionHolder connectionHolder;
 
     @Override
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
             if (!method.isAnnotationPresent(Transactional.class)) {
-                return proxy.invokeSuper(obj, args);
+                return method.invoke(proxiedObject, args);
             } else {
                 Object result;
                 try {
                     connectionHolder.startTransaction();
-                    result = proxy.invokeSuper(obj, args);
+                    result = method.invoke(proxiedObject, args);
                     connectionHolder.commitTransaction();
                 } catch (Exception e) {
                     connectionHolder.rollbackTransaction();

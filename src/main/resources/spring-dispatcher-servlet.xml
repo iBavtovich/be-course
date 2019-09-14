@@ -48,14 +48,13 @@
         <bean name="dogServiceClass" factory-bean="simpleDogService" factory-method="getClass"/>
         <bean name="transactionalInterceptor" class="org.transactional.TransactionalInterceptor">
             <constructor-arg name="connectionHolder" ref="jdbcConnectionHolder"/>
+            <constructor-arg name="proxiedObject" ref="simpleDogService"/>
         </bean>
         <bean name="cGLibEnhancer" class="net.sf.cglib.proxy.Enhancer">
             <property name="superclass" ref="dogServiceClass"/>
             <property name="callback" ref="transactionalInterceptor"/>
          </bean>
-        <bean name="transactionalProxyService" factory-bean="cGLibEnhancer" factory-method="create">
-            <property name="dogDao" ref="dogDao"/>
-        </bean>
+        <bean name="transactionalProxyService" factory-bean="cGLibEnhancer" factory-method="create"/>
 
         <bean id="dogController" class="org.controller.DogController">
             <constructor-arg name="dogService" ref="transactionalProxyService"/>
