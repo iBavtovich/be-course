@@ -2,6 +2,7 @@ package org.service;
 
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.aspect.ExecutionLogged;
 import org.dao.DogDao;
 import org.model.Dog;
 import org.transactional.Transactional;
@@ -14,6 +15,7 @@ public class SimpleDogService {
 
     private DogDao dogDao;
 
+    @ExecutionLogged
     public Dog findDogById(long id) {
         return dogDao.findDogById(id);
     }
