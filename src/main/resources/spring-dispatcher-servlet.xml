@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd">
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <beans profile="default">
         <bean name="dataSource" class="org.h2.jdbcx.JdbcDataSource">
@@ -45,22 +45,20 @@
             <property name="dogDao" ref="dogDao"/>
         </bean>
 
-        <bean name="dogServiceClass" factory-bean="simpleDogService" factory-method="getClass"/>
-        <bean name="transactionalInterceptor" class="org.transactional.TransactionalInterceptor">
-            <constructor-arg name="connectionHolder" ref="jdbcConnectionHolder"/>
-            <constructor-arg name="proxiedObject" ref="simpleDogService"/>
-        </bean>
-        <bean name="cGLibEnhancer" class="net.sf.cglib.proxy.Enhancer">
-            <property name="superclass" ref="dogServiceClass"/>
-            <property name="callback" ref="transactionalInterceptor"/>
-         </bean>
-        <bean name="transactionalProxyService" factory-bean="cGLibEnhancer" factory-method="create"/>
-
         <bean id="dogController" class="org.controller.DogController">
-            <constructor-arg name="dogService" ref="transactionalProxyService"/>
+            <constructor-arg name="dogService" ref="simpleDogService"/>
         </bean>
         <bean name="jacksonObjectMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean"/>
 
+        <bean name="txAspect" class="org.aspect.TransactionalAspect">
+            <constructor-arg name="connectionHolder" ref="jdbcConnectionHolder"/>
+        </bean>
+        <aop:config>
+            <aop:aspect id="aspect" ref="txAspect">
+                <aop:pointcut id="pointCutAroundTransactional" expression="@annotation(org.transactional.Transactional)"/>
+                <aop:around method="around" pointcut-ref="pointCutAroundTransactional"/>
+            </aop:aspect>
+        </aop:config>
         <mvc:annotation-driven>
             <mvc:message-converters>
                 <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
