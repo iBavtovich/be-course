@@ -9,7 +9,7 @@ public class TransactionalAspect {
 
     private final JdbcConnectionHolder connectionHolder;
 
-    public Object around(ProceedingJoinPoint pjp) throws Throwable {
+    public Object wrapExecutionInTransaction(ProceedingJoinPoint pjp) throws Throwable {
         Object result;
         try {
             connectionHolder.startTransaction();

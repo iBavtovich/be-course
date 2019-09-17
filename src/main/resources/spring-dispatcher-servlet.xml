@@ -41,12 +41,12 @@
             <constructor-arg name="connectionHolder" ref="jdbcConnectionHolder"/>
         </bean>
 
-        <bean id="simpleDogService" class="org.service.SimpleDogService">
+        <bean id="dogService" class="org.service.SimpleDogService">
             <property name="dogDao" ref="dogDao"/>
         </bean>
 
         <bean id="dogController" class="org.controller.DogController">
-            <constructor-arg name="dogService" ref="simpleDogService"/>
+            <constructor-arg name="dogService" ref="dogService"/>
         </bean>
         <bean name="jacksonObjectMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean"/>
 
@@ -56,7 +56,7 @@
         <aop:config>
             <aop:aspect id="aspect" ref="txAspect">
                 <aop:pointcut id="pointCutAroundTransactional" expression="@annotation(org.transactional.Transactional)"/>
-                <aop:around method="around" pointcut-ref="pointCutAroundTransactional"/>
+                <aop:around method="wrapExecutionInTransaction" pointcut-ref="pointCutAroundTransactional"/>
             </aop:aspect>
         </aop:config>
         <mvc:annotation-driven>
