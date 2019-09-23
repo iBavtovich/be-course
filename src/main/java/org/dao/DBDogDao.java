@@ -1,9 +1,8 @@
 package org.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.transactional.JdbcConnectionHolder;
 import org.model.Dog;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -14,11 +13,11 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class DBDogDao implements DogDao {
 
-    private final JdbcConnectionHolder connectionHolder;
+    private final DataSource dataSource;
 
     @Override
     public Dog findDogById(long id) {
-        try (Connection connection = connectionHolder.acquireConnection();
+        try (Connection connection = DataSourceUtils.doGetConnection(dataSource);
              PreparedStatement statement = connection.prepareStatement("SELECT * FROM DOG WHERE ID = ?")) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
@@ -34,7 +33,7 @@ public class DBDogDao implements DogDao {
     @Override
     public void removeDog(Dog toRemove) {
         try {
-            Connection connection = connectionHolder.acquireConnection();
+            Connection connection = DataSourceUtils.doGetConnection(dataSource);
             PreparedStatement statement = connection.prepareStatement("DELETE FROM DOG WHERE ID = ?");
             statement.setLong(1, toRemove.getId());
             statement.execute();
@@ -47,7 +46,7 @@ public class DBDogDao implements DogDao {
     @Override
     public Dog saveDog(Dog toSave) {
         try {
-            Connection connection = connectionHolder.acquireConnection();
+            Connection connection = DataSourceUtils.doGetConnection(dataSource);
             PreparedStatement statement = connection.prepareStatement("INSERT INTO DOG(NAME, BIRTH_DATE, HEIGHT, WEIGHT) values (?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, toSave.getName());
@@ -65,7 +64,7 @@ public class DBDogDao implements DogDao {
     @Override
     public List<Dog> findAllDogs() {
         List<Dog> result = new ArrayList<>();
-        try (Connection connection = connectionHolder.acquireConnection()) {
+        try (Connection connection = DataSourceUtils.doGetConnection(dataSource)) {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM DOG");
             ResultSet resultSet = statement.executeQuery();
 
@@ -81,7 +80,7 @@ public class DBDogDao implements DogDao {
     @Override
     public Dog updateDog(Long id, Dog forUpdate) {
         try {
-            Connection connection = connectionHolder.acquireConnection();
+            Connection connection = DataSourceUtils.doGetConnection(dataSource);
             PreparedStatement statement = connection.prepareStatement("UPDATE DOG SET NAME = ?, BIRTH_DATE = ?, HEIGHT = ?, WEIGHT = ? WHERE ID = ?");
 
             statement.setString(1, forUpdate.getName());

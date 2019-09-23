@@ -39,12 +39,8 @@
     </beans>
 
     <beans>
-        <bean id="jdbcConnectionHolder" class="org.transactional.JdbcConnectionHolder">
-            <constructor-arg name="dataSource" ref="dataSource"/>
-        </bean>
-
         <bean id="dogDao" class="org.dao.DBDogDao">
-            <constructor-arg name="connectionHolder" ref="jdbcConnectionHolder"/>
+            <constructor-arg name="dataSource" ref="dataSource"/>
         </bean>
 
         <bean id="dogService" class="org.service.SimpleDogService">
