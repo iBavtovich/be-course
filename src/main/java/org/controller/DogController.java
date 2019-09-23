@@ -3,7 +3,6 @@ package org.controller;
 import lombok.RequiredArgsConstructor;
 import org.model.Dog;
 import org.service.DogService;
-import org.service.SimpleDogService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
