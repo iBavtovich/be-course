@@ -4,7 +4,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.dao.DogDao;
 import org.model.Dog;
-import org.transactional.Transactional;
 
 import java.util.List;
 
@@ -19,12 +18,12 @@ public class SimpleDogService implements DogService{
         return dogDao.findDogById(id);
     }
 
-    @Override @Transactional
+    @Override
     public void removeDog(Dog toRemove) {
         dogDao.removeDog(toRemove);
     }
 
-    @Override @Transactional
+    @Override
     public Dog saveDog(Dog toSave) {
         return dogDao.saveDog(toSave);
     }
@@ -34,7 +33,7 @@ public class SimpleDogService implements DogService{
         return dogDao.findAllDogs();
     }
 
-    @Override @Transactional
+    @Override
     public Dog updateDog(Long id, Dog dog) {
         return dogDao.updateDog(id, dog);
     }
