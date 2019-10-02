@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd
        http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
-       http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <beans profile="default">
-        <bean name="dataSource" class="org.h2.jdbcx.JdbcDataSource">
-            <property name="url" value="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1" />
+        <bean name="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+            <property name="jdbcUrl" value="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1" />
             <property name="user" value="sa" />
             <property name="password" value="" />
         </bean>
@@ -24,12 +23,16 @@
     </beans>
 
     <beans profile="prod">
-        <bean name="dataSource" class="org.postgresql.ds.PGSimpleDataSource">
-            <property name="url" value="jdbc:postgresql://localhost:5432/postgres" />
-            <property name="user" value="postgres" />
-            <property name="password" value="password" />
-            <property name="prepareThreshold" value="1"/>
-            <property name="preparedStatementCacheQueries" value="1"/>
+        <bean name="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+            <property name="jdbcUrl" value="jdbc:postgresql://localhost:5432/postgres" />
+            <property name="properties">
+                <util:properties>
+                    <prop key="user">postgres</prop>
+                    <prop key="password">password</prop>
+                    <prop key="prepareThreshold">1</prop>
+                    <prop key="preparedStatementCacheQueries">1</prop>
+                </util:properties>
+            </property>
         </bean>
         <bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
             <property name="baselineOnMigrate" value="true" />
