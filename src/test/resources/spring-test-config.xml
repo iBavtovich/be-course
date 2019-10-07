@@ -3,17 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!--    H2 DataSource config-->
-    <bean name="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-        <property name="jdbcUrl" value="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1" />
-        <property name="user" value="sa" />
-        <property name="password" value="" />
-    </bean>
-
-    <!-- Flyway configuration -->
-    <bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
-        <property name="baselineOnMigrate" value="true" />
-        <property name="locations" value="classpath:/db/migration/h2,classpath:/db/migration/common" />
-        <property name="dataSource" ref="dataSource" />
+    <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:application-test.properties"/>
     </bean>
 </beans>

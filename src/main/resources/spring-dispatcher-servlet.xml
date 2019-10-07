@@ -10,38 +10,28 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <beans profile="default">
-        <bean name="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-            <property name="jdbcUrl" value="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1" />
-            <property name="user" value="sa" />
-            <property name="password" value="" />
-        </bean>
-        <bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
-            <property name="baselineOnMigrate" value="true" />
-            <property name="locations" value="classpath:/db/migration/h2,classpath:/db/migration/common" />
-            <property name="dataSource" ref="dataSource" />
+        <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+            <property name="location" value="application-dev.properties"/>
         </bean>
     </beans>
 
     <beans profile="prod">
-        <bean name="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-            <property name="jdbcUrl" value="jdbc:postgresql://localhost:5432/postgres" />
-            <property name="properties">
-                <util:properties>
-                    <prop key="user">postgres</prop>
-                    <prop key="password">password</prop>
-                    <prop key="prepareThreshold">1</prop>
-                    <prop key="preparedStatementCacheQueries">1</prop>
-                </util:properties>
-            </property>
-        </bean>
-        <bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
-            <property name="baselineOnMigrate" value="true" />
-            <property name="locations" value="classpath:/db/migration/postgress,classpath:/db/migration/common" />
-            <property name="dataSource" ref="dataSource" />
+        <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+            <property name="location" value="application-prod.properties"/>
         </bean>
     </beans>
 
     <beans>
+        <bean name="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+            <property name="jdbcUrl" value="${jdbcUrl}"/>
+            <property name="user" value="${user}"/>
+            <property name="password" value="${password}"/>
+        </bean>
+        <bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
+            <property name="baselineOnMigrate" value="true" />
+            <property name="locations" value="${migration.locations}" />
+            <property name="dataSource" ref="dataSource" />
+        </bean>
         <bean id="dogDao" class="org.dao.DBDogDao">
             <constructor-arg name="jdbcTemplate" ref="jdbcTemplate"/>
         </bean>
