@@ -26,6 +26,10 @@
             <property name="jdbcUrl" value="${jdbcUrl}"/>
             <property name="user" value="${user}"/>
             <property name="password" value="${password}"/>
+            <property name="maxPoolSize" value="10"/>
+            <property name="minPoolSize" value="3"/>
+            <property name="maxStatementsPerConnection" value="5"/>
+            <property name="maxStatements" value="50"/>
         </bean>
         <bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
             <property name="baselineOnMigrate" value="true" />
