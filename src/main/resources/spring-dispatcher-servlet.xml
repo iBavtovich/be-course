@@ -3,19 +3,18 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:jee="http://www.springframework.org/schema/jee"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd
        http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd">
 
         <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
             <property name="location" value="classpath:application-#{systemProperties['ENV'] ?: 'dev'}.properties"/>
         </bean>
+        <jee:jndi-lookup id="dataSource" jndi-name="${jndi.data-source.location}"/>
 
-        <bean name="dataSource" class="org.config.DataSourceFactoryBean">
-            <property name="jndiObjectLocation" value="${jndi.data-source.location}"/>
-        </bean>
         <bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
             <property name="baselineOnMigrate" value="true" />
             <property name="locations" value="${migration.locations}" />
