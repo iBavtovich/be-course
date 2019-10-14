@@ -42,7 +42,7 @@ public class DBDogDao implements DogDao {
             ps.setInt(4, toSave.getWeight());
             return ps;
         }, keyHolder);
-        return toSave.setId(keyHolder.getKey().longValue());
+        return toSave.setId(((Number) keyHolder.getKeys().get("id")).longValue());
     }
 
     @Override

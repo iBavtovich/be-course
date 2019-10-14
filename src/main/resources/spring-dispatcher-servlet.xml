@@ -9,19 +9,10 @@
        http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-    <beans profile="default">
         <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-            <property name="location" value="application-dev.properties"/>
+            <property name="location" value="application-${#{systemProperties['ENV']}:dev}.properties"/>
         </bean>
-    </beans>
 
-    <beans profile="prod">
-        <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-            <property name="location" value="application-prod.properties"/>
-        </bean>
-    </beans>
-
-    <beans>
         <bean name="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
             <property name="jdbcUrl" value="${jdbcUrl}"/>
             <property name="user" value="${user}"/>
@@ -64,5 +55,4 @@
                 </bean>
             </mvc:message-converters>
         </mvc:annotation-driven>
-    </beans>
 </beans>
