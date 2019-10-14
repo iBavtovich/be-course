@@ -10,7 +10,7 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
         <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-            <property name="location" value="application-${#{systemProperties['ENV']}:dev}.properties"/>
+            <property name="location" value="classpath:application-#{systemProperties['ENV'] ?: 'dev'}.properties"/>
         </bean>
 
         <bean name="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
