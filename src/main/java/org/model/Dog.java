@@ -49,6 +49,6 @@ public class Dog {
     }
 
     public static Dog random() {
-        return new Dog().setWeight(integer(1, 100)).setWeight(integer(1, 100)).setName(english(1, 100));
+        return new Dog().setWeight(integer(1, 100)).setHeight(integer(1, 100)).setName(english(1, 100));
     }
 }

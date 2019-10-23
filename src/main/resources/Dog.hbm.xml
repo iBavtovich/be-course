@@ -1,0 +1,11 @@
+    <hibernate-mapping package="org.model">
+        <class name="Dog" table="DOG">
+            <id name="id" column="ID">
+                <generator class="native"/>
+            </id>
+            <property name="name" column="NAME"/>
+            <property name="dateOfBirth" column="BIRTH_DATE"/>
+            <property name="height" column="HEIGHT"/>
+            <property name="weight" column="WEIGHT"/>
+        </class>
+    </hibernate-mapping>
